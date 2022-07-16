@@ -20,8 +20,10 @@
             </form>
         </div>
 
-        <div class="d-none " id="train_schedule">
-            
+        <div class="d-block " id="train_schedule">
+            <div class="row search_data">
+               
+            </div>
         </div>
     </div>
 
@@ -35,10 +37,23 @@
             $("#train_no").keyup(function() {
                 if($(this).val().length  == 5) {
                     $("#submit").attr('disabled', false);
-                    $("#train_no").focusout();
-                    $("#train_schedule_submit").submit();
+                    // $("#train_schedule_submit").submit();
                 } else {
                     $("#submit").attr('disabled', true);
+                }
+
+                // Search TRain Results on keyup 
+                if($(this).val().length > 2){
+                    $(this).trigger('blur');
+                    var train_no = $(this).val();
+                    $.ajax({
+                    url : front_site_path+'ajax-request/train_list.php',
+                    method: 'post',
+                    data : "train_no="+train_no,
+                    success: (res) => {
+                        $("#train_schedule .row").html(res)
+                    }       
+                })
                 }
             });
             var front_site_path = $("#front_site_path").val();
@@ -54,10 +69,9 @@
                     success: (res) => {
                         $("#train_schedule").removeClass("d-none");
                         $("#train_schedule").addClass("d-block");
-                        $("#train_schedule").html(res)
+                        $("#train_schedule .search_data").html(res)
                         $("#submit").attr('disabled', false);
                         $("#submit").html("Search");
-                        console.log(res);
                     }       
                 })
             });
